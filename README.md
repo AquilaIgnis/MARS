@@ -49,6 +49,8 @@ On Windows use `./gradlew.bat`. Otherwise use `./gradlew`. \
 Lastly, use `build` command to create `build/libs/Mars-4.6.jar` file and run it with `java -jar build/libs/Mars-4.6.jar` \
 Or run it directly with the `run` command. Format it with the `spotlessApply` command.
 
+Look at Mips examples [here](./examples/).
+
 ## Credits
 
 Obviously, thanks to [Pete Sanderson](https://github.com/dpetersanderson) for making the original app. \
