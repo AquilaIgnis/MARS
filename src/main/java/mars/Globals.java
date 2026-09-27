@@ -66,6 +66,9 @@ public class Globals {
   /** Flag to determine whether or not to produce internal debugging information. * */
   public static boolean debug = false;
 
+  /** Flag to determine if the theme is dark or light. * */
+  public static boolean isDark = false;
+
   /** Object that contains various settings that can be accessed modified internally. * */
   static Settings settings;
 

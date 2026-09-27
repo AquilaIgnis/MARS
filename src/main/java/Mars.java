@@ -36,6 +36,9 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatArcIJTheme;
 import com.jthemedetecor.OsThemeDetector;
+
+import mars.Globals;
+
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -43,9 +46,9 @@ public class Mars {
 
   public static void main(String[] args) {
     final OsThemeDetector detector = OsThemeDetector.getDetector();
-    final boolean isDarkThemeUsed = detector.isDark();
+    Globals.isDark = detector.isDark();
 
-    if (isDarkThemeUsed) {
+    if (Globals.isDark) {
       FlatArcDarkIJTheme.setup();
     } else {
       FlatArcIJTheme.setup();
