@@ -3,7 +3,6 @@ package mars.venus.editors.jeditsyntax;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
 import javax.swing.undo.*;
 import mars.*;
 import mars.venus.EditPane;
