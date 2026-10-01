@@ -46,8 +46,8 @@ And more...
 First, Install Java 25 on your system. \
 Choose a gradle wrapper base on your OS: \
 On Windows use `./gradlew.bat`. Otherwise use `./gradlew`. \
-Lastly, use `build` command to create a jar file `build/libs` and execute that file `java -jar file.jar` \
-Or run it directly with the `run` command. Format it with the `spotlessApply` command.
+Run the app with the `./gradlew run` command. \
+Format it with the `./gradlew spotlessApply` command.
 
 Look at Mips examples [here](./examples/).
 
