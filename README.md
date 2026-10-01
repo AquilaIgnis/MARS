@@ -13,7 +13,7 @@ This is the original MARS, developed by Pete Sanderson and Ken Vollmar. Develope
 Until October 2024 the MARS website, including executable JAR file download, was hosted by Missouri State University. That is no longer the case. That's why it is here.
 
 > [!WARNING]
-> This is my community maintained fork version 4.6 that merges useful PRs into the project for my personal use.
+> This is my community maintained fork version that merges useful PRs into the project for my personal use.
 > You can use it if you want, but I'm not gonna maintain it much, so use it at your own risks.
 
 ## Features
@@ -46,7 +46,7 @@ And more...
 First, Install Java 25 on your system. \
 Choose a gradle wrapper base on your OS: \
 On Windows use `./gradlew.bat`. Otherwise use `./gradlew`. \
-Lastly, use `build` command to create `build/libs/Mars-4.6.jar` file and run it with `java -jar build/libs/Mars-4.6.jar` \
+Lastly, use `build` command to create a jar file `build/libs` and execute that file `java -jar file.jar` \
 Or run it directly with the `run` command. Format it with the `spotlessApply` command.
 
 Look at Mips examples [here](./examples/).

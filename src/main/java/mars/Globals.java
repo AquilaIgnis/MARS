@@ -88,7 +88,7 @@ public class Globals {
   static VenusUI gui = null;
 
   /** The current MARS version number. Can't wait for "initialize()" call to get it. */
-  public static final String version = "4.6";
+  public static final String version = "4.6.1";
 
   /** List of accepted file extensions for MIPS assembly source files. */
   public static final List<String> fileExtensions = getFileExtensions();
