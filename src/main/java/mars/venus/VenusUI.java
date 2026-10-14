@@ -1,5 +1,6 @@
 package mars.venus;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -296,19 +297,22 @@ public class VenusUI extends JFrame {
     this.setVisible(true);
   }
 
+  /** Loads a theme-aware SVG icon from the /icons resource folder. */
+  public static Icon icon(String name, int size) {
+    return new FlatSVGIcon("icons/" + name + ".svg", size, size);
+  }
+
   /*
    * Action objects are used instead of action listeners because one can be easily shared between
    * a menu item and a toolbar button.  Does nice things like disable both if the action is
    * disabled, etc.
    */
   private void createActionObjects() {
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    Class<?> cs = this.getClass();
     try {
       fileNewAction =
           new FileNewAction(
               "New",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "New22.png"))),
+              icon("new", 18),
               "Create a new file for editing",
               KeyEvent.VK_N,
               KeyStroke.getKeyStroke(
@@ -317,7 +321,7 @@ public class VenusUI extends JFrame {
       fileOpenAction =
           new FileOpenAction(
               "Open",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Open22.png"))),
+              icon("open", 18),
               "Open a file for editing",
               KeyEvent.VK_O,
               KeyStroke.getKeyStroke(
@@ -338,7 +342,7 @@ public class VenusUI extends JFrame {
       fileSaveAction =
           new FileSaveAction(
               "Save",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Save22.png"))),
+              icon("save", 18),
               "Save the current file",
               KeyEvent.VK_S,
               KeyStroke.getKeyStroke(
@@ -347,7 +351,7 @@ public class VenusUI extends JFrame {
       fileSaveAsAction =
           new FileSaveAsAction(
               "Save as",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "SaveAs22.png"))),
+              icon("saveas", 18),
               "Save current file with different name",
               KeyEvent.VK_A,
               null,
@@ -358,7 +362,7 @@ public class VenusUI extends JFrame {
       fileDumpMemoryAction =
           new FileDumpMemoryAction(
               "Dump Memory",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Dump22.png"))),
+              icon("dump", 18),
               "Dump machine code or data in an available format",
               KeyEvent.VK_D,
               KeyStroke.getKeyStroke(
@@ -366,17 +370,12 @@ public class VenusUI extends JFrame {
               mainUI);
       filePrintAction =
           new FilePrintAction(
-              "Print",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Print22.gif"))),
-              "Print current file",
-              KeyEvent.VK_P,
-              null,
-              mainUI);
+              "Print", icon("print", 18), "Print current file", KeyEvent.VK_P, null, mainUI);
       fileExitAction = new FileExitAction("Exit", null, "Exit Mars", KeyEvent.VK_X, null, mainUI);
       editUndoAction =
           new EditUndoAction(
               "Undo",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Undo22.png"))),
+              icon("undo", 18),
               "Undo last edit",
               KeyEvent.VK_U,
               KeyStroke.getKeyStroke(
@@ -385,7 +384,7 @@ public class VenusUI extends JFrame {
       editRedoAction =
           new EditRedoAction(
               "Redo",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Redo22.png"))),
+              icon("redo", 18),
               "Redo last edit",
               KeyEvent.VK_R,
               KeyStroke.getKeyStroke(
@@ -394,7 +393,7 @@ public class VenusUI extends JFrame {
       editCutAction =
           new EditCutAction(
               "Cut",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Cut22.gif"))),
+              icon("cut", 18),
               "Cut",
               KeyEvent.VK_C,
               KeyStroke.getKeyStroke(
@@ -403,7 +402,7 @@ public class VenusUI extends JFrame {
       editCopyAction =
           new EditCopyAction(
               "Copy",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Copy22.png"))),
+              icon("copy", 18),
               "Copy",
               KeyEvent.VK_O,
               KeyStroke.getKeyStroke(
@@ -412,7 +411,7 @@ public class VenusUI extends JFrame {
       editPasteAction =
           new EditPasteAction(
               "Paste",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Paste22.png"))),
+              icon("paste", 18),
               "Paste",
               KeyEvent.VK_P,
               KeyStroke.getKeyStroke(
@@ -421,7 +420,7 @@ public class VenusUI extends JFrame {
       editFindReplaceAction =
           new EditFindReplaceAction(
               "Find/Replace",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Find22.png"))),
+              icon("find", 18),
               "Find/Replace",
               KeyEvent.VK_F,
               KeyStroke.getKeyStroke(
@@ -439,7 +438,7 @@ public class VenusUI extends JFrame {
       runAssembleAction =
           new RunAssembleAction(
               "Assemble",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Assemble22.png"))),
+              icon("assemble", 18),
               "Assemble the current file and clear breakpoints",
               KeyEvent.VK_A,
               KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0),
@@ -447,7 +446,7 @@ public class VenusUI extends JFrame {
       runGoAction =
           new RunGoAction(
               "Go",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Play22.png"))),
+              icon("go", 18),
               "Run the current program",
               KeyEvent.VK_G,
               KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0),
@@ -455,7 +454,7 @@ public class VenusUI extends JFrame {
       runStepAction =
           new RunStepAction(
               "Step",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "StepForward22.png"))),
+              icon("step", 18),
               "Run one step at a time",
               KeyEvent.VK_T,
               KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0),
@@ -463,7 +462,7 @@ public class VenusUI extends JFrame {
       runBackstepAction =
           new RunBackstepAction(
               "Backstep",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "StepBack22.png"))),
+              icon("backstep", 18),
               "Undo the last step",
               KeyEvent.VK_B,
               KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0),
@@ -471,7 +470,7 @@ public class VenusUI extends JFrame {
       runPauseAction =
           new RunPauseAction(
               "Pause",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Pause22.png"))),
+              icon("pause", 18),
               "Pause the currently running program",
               KeyEvent.VK_P,
               KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0),
@@ -479,7 +478,7 @@ public class VenusUI extends JFrame {
       runStopAction =
           new RunStopAction(
               "Stop",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Stop22.png"))),
+              icon("stop", 18),
               "Stop the currently running program",
               KeyEvent.VK_S,
               KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0),
@@ -487,7 +486,7 @@ public class VenusUI extends JFrame {
       runResetAction =
           new RunResetAction(
               "Reset",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Reset22.png"))),
+              icon("reset", 18),
               "Reset MIPS memory and registers",
               KeyEvent.VK_R,
               KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0),
@@ -637,7 +636,7 @@ public class VenusUI extends JFrame {
       helpHelpAction =
           new HelpHelpAction(
               "Help",
-              new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Help22.png"))),
+              icon("help", 18),
               "Help",
               KeyEvent.VK_H,
               KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
@@ -677,9 +676,9 @@ public class VenusUI extends JFrame {
     // slight bug: user typing alt-H activates help menu item directly, not help menu
 
     fileNew = new JMenuItem(fileNewAction);
-    fileNew.setIcon(new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "New16.png"))));
+    fileNew.setIcon(icon("new", 16));
     fileOpen = new JMenuItem(fileOpenAction);
-    fileOpen.setIcon(new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Open16.png"))));
+    fileOpen.setIcon(icon("open", 16));
     fileClose = new JMenuItem(fileCloseAction);
     fileClose.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
@@ -687,19 +686,16 @@ public class VenusUI extends JFrame {
     fileCloseAll.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
     fileSave = new JMenuItem(fileSaveAction);
-    fileSave.setIcon(new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Save16.png"))));
+    fileSave.setIcon(icon("save", 16));
     fileSaveAs = new JMenuItem(fileSaveAsAction);
-    fileSaveAs.setIcon(
-        new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "SaveAs16.png"))));
+    fileSaveAs.setIcon(icon("saveas", 16));
     fileSaveAll = new JMenuItem(fileSaveAllAction);
     fileSaveAll.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
     fileDumpMemory = new JMenuItem(fileDumpMemoryAction);
-    fileDumpMemory.setIcon(
-        new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Dump16.png"))));
+    fileDumpMemory.setIcon(icon("dump", 16));
     filePrint = new JMenuItem(filePrintAction);
-    filePrint.setIcon(
-        new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Print16.gif"))));
+    filePrint.setIcon(icon("print", 16));
     fileExit = new JMenuItem(fileExitAction);
     fileExit.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
@@ -720,27 +716,17 @@ public class VenusUI extends JFrame {
     file.add(fileExit);
 
     editUndo = new JMenuItem(editUndoAction);
-    editUndo.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Undo16.png")))); // "Undo16.gif"))));
+    editUndo.setIcon(icon("undo", 16));
     editRedo = new JMenuItem(editRedoAction);
-    editRedo.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Redo16.png")))); // "Redo16.gif"))));
+    editRedo.setIcon(icon("redo", 16));
     editCut = new JMenuItem(editCutAction);
-    editCut.setIcon(new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "Cut16.gif"))));
+    editCut.setIcon(icon("cut", 16));
     editCopy = new JMenuItem(editCopyAction);
-    editCopy.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Copy16.png")))); // "Copy16.gif"))));
+    editCopy.setIcon(icon("copy", 16));
     editPaste = new JMenuItem(editPasteAction);
-    editPaste.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Paste16.png")))); // "Paste16.gif"))));
+    editPaste.setIcon(icon("paste", 16));
     editFindReplace = new JMenuItem(editFindReplaceAction);
-    editFindReplace.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Find16.png")))); // "Paste16.gif"))));
+    editFindReplace.setIcon(icon("find", 16));
     editSelectAll = new JMenuItem(editSelectAllAction);
     editSelectAll.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
@@ -755,38 +741,19 @@ public class VenusUI extends JFrame {
     edit.add(editSelectAll);
 
     runAssemble = new JMenuItem(runAssembleAction);
-    runAssemble.setIcon(
-        new ImageIcon(
-            tk.getImage(
-                cs.getResource(Globals.imagesPath + "Assemble16.png")))); // "MyAssemble16.gif"))));
+    runAssemble.setIcon(icon("assemble", 16));
     runGo = new JMenuItem(runGoAction);
-    runGo.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Play16.png")))); // "Play16.gif"))));
+    runGo.setIcon(icon("go", 16));
     runStep = new JMenuItem(runStepAction);
-    runStep.setIcon(
-        new ImageIcon(
-            tk.getImage(
-                cs.getResource(
-                    Globals.imagesPath + "StepForward16.png")))); // "MyStepForward16.gif"))));
+    runStep.setIcon(icon("step", 16));
     runBackstep = new JMenuItem(runBackstepAction);
-    runBackstep.setIcon(
-        new ImageIcon(
-            tk.getImage(
-                cs.getResource(Globals.imagesPath + "StepBack16.png")))); // "MyStepBack16.gif"))));
+    runBackstep.setIcon(icon("backstep", 16));
     runReset = new JMenuItem(runResetAction);
-    runReset.setIcon(
-        new ImageIcon(
-            tk.getImage(
-                cs.getResource(Globals.imagesPath + "Reset16.png")))); // "MyReset16.gif"))));
+    runReset.setIcon(icon("reset", 16));
     runStop = new JMenuItem(runStopAction);
-    runStop.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Stop16.png")))); // "Stop16.gif"))));
+    runStop.setIcon(icon("stop", 16));
     runPause = new JMenuItem(runPauseAction);
-    runPause.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Pause16.png")))); // "Pause16.gif"))));
+    runPause.setIcon(icon("pause", 16));
     runClearBreakpoints = new JMenuItem(runClearBreakpointsAction);
     runClearBreakpoints.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));
@@ -871,9 +838,7 @@ public class VenusUI extends JFrame {
     settings.add(settingsMemoryConfiguration);
 
     helpHelp = new JMenuItem(helpHelpAction);
-    helpHelp.setIcon(
-        new ImageIcon(
-            tk.getImage(cs.getResource(Globals.imagesPath + "Help16.png")))); // "Help16.gif"))));
+    helpHelp.setIcon(icon("help", 16));
     helpAbout = new JMenuItem(helpAboutAction);
     helpAbout.setIcon(
         new ImageIcon(tk.getImage(cs.getResource(Globals.imagesPath + "MyBlank16.gif"))));

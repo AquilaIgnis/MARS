@@ -21,7 +21,9 @@ Until October 2024 the MARS website, including executable JAR file download, was
 This fork includes [Flatlaf](https://www.formdev.com/flatlaf/) to allow for:
 
 - Partial dark mode support
-- Intellij theme support
+- Modern macOS-style light and dark themes
+- Crisp SVG toolbar icons that follow the theme
+- Inter and JetBrains Mono fonts
 - Native window decorations
 - High DPI displays
 - Automatic theme delection using [jSystemThemeDetector](https://github.com/Dansoftowner/jSystemThemeDetector)
@@ -58,6 +60,7 @@ Thanks to [Flatlaf](https://www.formdev.com/flatlaf/) for the legacy Java themin
 Thanks to [Steven](https://github.com/ste-lam) for contributing most of the PRs mentioned. \
 Thanks to [Daniel Dimitrov](https://github.com/danieldimitrov86) for the directory persistence PR. \
 Thanks to [Daniel Gyoerffy](https://github.com/Dansoftowner) for the jSystemThemeDetector library. \
+Thanks to [Tabler Icons](https://tabler.io/icons) for the toolbar icons. \
 Thanks to [Google](https://github.com/google) and [Spotless](https://github.com/diffplug/spotless) for their java formatting tools.
 
 ## License

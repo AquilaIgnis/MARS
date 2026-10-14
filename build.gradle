@@ -41,7 +41,9 @@ dependencies {
     implementation('com.github.Dansoftowner:jSystemThemeDetector:3.9.1')
     implementation('ch.qos.logback:logback-core:1.6.3')
     implementation('ch.qos.logback:logback-classic:1.6.3')
-    implementation('com.formdev:flatlaf-intellij-themes:3.7.2')
+    implementation('com.formdev:flatlaf-extras:3.7.2')
+    implementation('com.formdev:flatlaf-fonts-inter:4.1')
+    implementation('com.formdev:flatlaf-fonts-jetbrains-mono:2.304')
 }
 
 spotless {
