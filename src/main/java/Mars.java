@@ -44,10 +44,19 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import mars.Globals;
+import mars.Settings;
 
 public class Mars {
 
   public static void main(String[] args) {
+    // Java fixes the interface scale when graphics start up, so this has to come first.
+    String uiScale = Settings.getSavedUIScale();
+    if (System.getProperty("sun.java2d.uiScale") != null) {
+      Globals.uiScaleFromCommandLine = true;
+    } else if (!uiScale.isEmpty()) {
+      System.setProperty("sun.java2d.uiScale", uiScale);
+    }
+
     FlatInterFont.install();
     FlatJetBrainsMonoFont.install();
     FlatLaf.setPreferredFontFamily(FlatInterFont.FAMILY);

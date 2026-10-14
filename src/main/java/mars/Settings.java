@@ -225,6 +225,9 @@ public class Settings extends Observable {
   /** Default save directory when saving a new file */
   public static final int LAST_SAVE_DIRECTORY = 8;
 
+  /** Interface scale factor such as "1.5", or empty to let Java decide. Applies on restart. */
+  public static final int UI_SCALE = 9;
+
   // Match the above by position.
   private static final String[] stringSettingsKeys = {
     "ExceptionHandler",
@@ -235,7 +238,8 @@ public class Settings extends Observable {
     "EditorTabSize",
     "EditorPopupPrefixLength",
     "LastOpenDirectory",
-    "LastSaveDirectory"
+    "LastSaveDirectory",
+    "UIScale"
   };
 
   /**
@@ -252,7 +256,8 @@ public class Settings extends Observable {
     "8",
     "2",
     System.getProperty("user.dir"),
-    System.getProperty("user.dir")
+    System.getProperty("user.dir"),
+    ""
   };
 
   // FONT SETTINGS. Each array position has associated name.
@@ -944,6 +949,20 @@ public class Settings extends Observable {
   }
 
   /**
+   * Get the saved interface scale factor without creating a Settings object. It has to be read
+   * before any window is created, because Java fixes the scale when graphics start up.
+   *
+   * @return scale factor such as "1.5", or an empty string to let Java decide
+   */
+  public static String getSavedUIScale() {
+    try {
+      return Preferences.userNodeForPackage(Settings.class).get(stringSettingsKeys[UI_SCALE], "");
+    } catch (SecurityException se) {
+      return "";
+    }
+  }
+
+  /**
    * Get Color object for specified settings key. Returns null if key is not found or its value is
    * not a valid color encoding.
    *
@@ -1328,6 +1347,15 @@ public class Settings extends Observable {
    */
   public void setLabelSortState(String state) {
     setStringSetting(LABEL_SORT_STATE, state);
+  }
+
+  /**
+   * Set the interface scale factor, used from the next start of MARS.
+   *
+   * @param scale scale factor such as "1.5", or an empty string to let Java decide
+   */
+  public void setUIScale(String scale) {
+    setStringSetting(UI_SCALE, scale);
   }
 
   /**

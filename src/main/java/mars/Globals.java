@@ -69,6 +69,9 @@ public class Globals {
   /** Flag to determine if the theme is dark or light. * */
   public static boolean isDark = false;
 
+  /** Flag set when -Dsun.java2d.uiScale was given, overriding the interface scale setting. */
+  public static boolean uiScaleFromCommandLine = false;
+
   /** Object that contains various settings that can be accessed modified internally. * */
   static Settings settings;
 
