@@ -24,7 +24,16 @@ jar {
         attributes['Implementation-Title'] = project.name
         attributes['Implementation-Version'] = project.version
         attributes['Main-Class'] = application.mainClass
+        attributes['Multi-Release'] = 'true'
     }
+
+    // Bundle runtime dependencies so the jar runs standalone with `java -jar`.
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.EC')
+    exclude('module-info.class', 'META-INF/versions/*/module-info.class')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 dependencies {
@@ -33,7 +42,6 @@ dependencies {
     implementation('ch.qos.logback:logback-core:1.6.3')
     implementation('ch.qos.logback:logback-classic:1.6.3')
     implementation('com.formdev:flatlaf-intellij-themes:3.7.2')
-    implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:8.10.3")
 }
 
 spotless {
