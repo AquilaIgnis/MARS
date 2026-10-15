@@ -26,7 +26,7 @@ This fork includes [Flatlaf](https://www.formdev.com/flatlaf/) to allow for:
 - Inter and JetBrains Mono fonts
 - Native window decorations
 - High DPI displays
-- Automatic theme delection using [jSystemThemeDetector](https://github.com/Dansoftowner/jSystemThemeDetector)
+- Automatic theme detection using [jSystemThemeDetector](https://github.com/Dansoftowner/jSystemThemeDetector)
 
 And more...
 
