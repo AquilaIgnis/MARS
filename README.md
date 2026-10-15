@@ -51,6 +51,12 @@ On Windows use `./gradlew.bat`. Otherwise use `./gradlew`. \
 Run the app with the `./gradlew run` command. \
 Format it with the `./gradlew spotlessApply` command.
 
+To build a native package that bundles its own Java runtime, so users don't need Java installed: \
+On Windows, `./gradlew.bat portableZip` makes a portable zip with `MARS.exe` (and `MARS-cli.exe` for command-line mode). \
+On Linux, `./gradlew appImage` makes an AppImage. It needs [appimagetool](https://github.com/AppImage/appimagetool) on your PATH. \
+Both end up in `build/distributions/`. Each one has to be built on its own OS. \
+If jpackage fails with a jlink error (Fedora's JDK does), point it at another JDK with `-PjpackageJdk=/path/to/jdk`.
+
 Look at Mips examples [here](./examples/).
 
 ## Credits

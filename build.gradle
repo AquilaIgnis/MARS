@@ -36,6 +36,90 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+// Native packages: jpackage builds a MARS folder with its own trimmed Java runtime,
+// which is then zipped as a portable build or wrapped into an AppImage.
+// jpackage can't cross-build, so build each OS's package on that OS.
+def osName = System.getProperty('os.name').toLowerCase()
+def isWindows = osName.contains('windows')
+def isLinux = osName.contains('linux')
+def osArch = System.getProperty('os.arch') == 'amd64' ? 'x86_64' : System.getProperty('os.arch')
+def jpackageInputDir = layout.buildDirectory.dir('jpackage-input')
+def jpackageDir = layout.buildDirectory.dir('jpackage')
+def appDir = layout.buildDirectory.dir('appimage/MARS.AppDir')
+
+interface InjectedFs {
+    @Inject FileSystemOperations getFs()
+}
+def injected = objects.newInstance(InjectedFs)
+
+def stageJar = tasks.register('stageJar', Sync) {
+    from tasks.named('jar')
+    into jpackageInputDir
+}
+
+def jpackageImage = tasks.register('jpackageImage', Exec) {
+    group = 'distribution'
+    description = 'Builds a MARS app folder that bundles its own Java runtime.'
+    dependsOn stageJar
+    inputs.dir(jpackageInputDir)
+    inputs.dir('packaging')
+    outputs.dir(jpackageDir)
+
+    // Some distro JDKs (e.g. Fedora's) ship without jmods and with a modified security config,
+    // which breaks jlink. -PjpackageJdk=/path/to/jdk points jpackage at a different JDK.
+    def jdk = providers.gradleProperty('jpackageJdk').getOrElse(System.getProperty('java.home'))
+    executable = new File(jdk, isWindows ? 'bin/jpackage.exe' : 'bin/jpackage').path
+    args '--type', 'app-image',
+        '--name', 'MARS',
+        '--app-version', project.version.toString(),
+        '--description', 'MIPS Assembler and Runtime Simulator',
+        '--input', jpackageInputDir.get().asFile.path,
+        '--main-jar', tasks.named('jar').get().archiveFileName.get(),
+        '--add-modules', 'java.base,java.desktop,java.logging,java.naming,java.prefs',
+        '--dest', jpackageDir.get().asFile.path
+    if (isWindows) {
+        args '--icon', file('src/main/resources/images/mars.ico').path,
+            '--add-launcher', "MARS-cli=${file('packaging/windows/MARS-cli.properties').path}"
+    } else if (isLinux) {
+        args '--icon', file('packaging/linux/mars.png').path
+    }
+
+    // jpackage refuses to overwrite an existing image.
+    doFirst { injected.fs.delete { delete jpackageDir } }
+}
+
+tasks.register('portableZip', Zip) {
+    group = 'distribution'
+    description = 'Zips the jpackage app folder into a portable build that needs no installed Java.'
+    from jpackageImage
+    archiveFileName = "MARS-${project.version}-${isWindows ? 'windows' : osName.split(' ')[0]}-${osArch}.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+}
+
+def appDirTask = tasks.register('appDir', Sync) {
+    from jpackageImage
+    from('packaging/linux') {
+        filePermissions { unix('rwxr-xr-x') }
+        include 'AppRun'
+    }
+    from('packaging/linux') { include 'mars.desktop', 'mars.png' }
+    into appDir
+}
+
+tasks.register('appImage', Exec) {
+    group = 'distribution'
+    description = 'Wraps the jpackage app folder into a Linux AppImage. Needs appimagetool on PATH or in $APPIMAGETOOL.'
+    onlyIf('AppImages can only be built on Linux') { isLinux }
+    dependsOn appDirTask
+    def output = layout.buildDirectory.file("distributions/MARS-${project.version}-${osArch}.AppImage")
+    inputs.dir(appDir)
+    outputs.file(output)
+
+    executable = providers.environmentVariable('APPIMAGETOOL').getOrElse('appimagetool')
+    environment 'ARCH', osArch
+    args appDir.get().asFile.path, output.get().asFile.path
+}
+
 dependencies {
     implementation('com.formdev:flatlaf:3.7.2')
     implementation('com.github.Dansoftowner:jSystemThemeDetector:3.9.1')
