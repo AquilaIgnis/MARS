@@ -53,13 +53,22 @@ jobs:
           java-version: "25"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+      - name: Install warp-packer
+        working-directory: ${{ runner.temp }}
+        shell: bash
+        run: |
+          curl -fsSL -o warp-packer.exe https://github.com/kirbylink/warp/releases/download/v1.3.0/windows-x64.warp-packer.exe
+          echo "483726e0eb10a43167c03c8e4f27a2901741affd245e5ec8ed45509f9dcd7a8a  warp-packer.exe" | sha256sum -c -
+          echo "WARP_PACKER=$(cygpath -w "$PWD/warp-packer.exe")" >> "$GITHUB_ENV"
       - name: Build
-        run: .\gradlew.bat clean portableZip
+        run: .\gradlew.bat clean portableZip windowsExe
       - name: Upload
         uses: actions/upload-artifact@v7
         with:
           name: windows
-          path: build/distributions/*.zip
+          path: |
+            build/distributions/*.zip
+            build/distributions/*.exe
 
   release:
     needs: [linux, windows]

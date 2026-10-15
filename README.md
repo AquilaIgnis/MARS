@@ -52,9 +52,10 @@ Run the app with the `./gradlew run` command. \
 Format it with the `./gradlew spotlessApply` command.
 
 To build a native package that bundles its own Java runtime, so users don't need Java installed: \
-On Windows, `./gradlew.bat portableZip` makes a portable zip with `MARS.exe` (and `MARS-cli.exe` for command-line mode). \
+On Windows, `./gradlew.bat portableZip` makes a portable zip with `MARS.exe` (and `MARS-cli.exe` for command-line mode). `MARS.exe` only works next to the `app` and `runtime` folders, so move the whole folder, not just the exe. \
+On Windows, `./gradlew.bat windowsExe` makes a single exe that can be copied on its own. It unpacks itself into `%LOCALAPPDATA%\warp\packages\MARS` on first launch. It needs [warp-packer](https://github.com/kirbylink/warp) on your PATH. \
 On Linux, `./gradlew appImage` makes an AppImage. It needs [appimagetool](https://github.com/AppImage/appimagetool) on your PATH. \
-Both end up in `build/distributions/`. Each one has to be built on its own OS. \
+They all end up in `build/distributions/`. Each one has to be built on its own OS. \
 If jpackage fails with a jlink error (Fedora's JDK does), point it at another JDK with `-PjpackageJdk=/path/to/jdk`.
 
 Look at Mips examples [here](./examples/).

@@ -96,6 +96,33 @@ tasks.register('portableZip', Zip) {
     destinationDirectory = layout.buildDirectory.dir('distributions')
 }
 
+// jpackage's MARS.exe is only a launcher stub that needs the app and runtime folders next to it,
+// so warp-packer bundles the whole folder into one exe. It unpacks itself into
+// %LOCALAPPDATA%\warp\packages\MARS on first run and runs from there afterwards.
+tasks.register('windowsExe', Exec) {
+    group = 'distribution'
+    description = 'Packs the jpackage app folder into a single Windows exe. Needs warp-packer on PATH or in $WARP_PACKER.'
+    onlyIf('The jpackage app folder for Windows can only be built on Windows') { isWindows }
+    dependsOn jpackageImage
+    def input = jpackageDir.map { it.dir('MARS') }
+    def output = layout.buildDirectory.file("distributions/MARS-${project.version}-windows-${osArch}.exe")
+    inputs.dir(input)
+    outputs.file(output)
+
+    executable = providers.environmentVariable('WARP_PACKER').getOrElse('warp-packer')
+    args 'pack',
+        '--arch', osArch == 'aarch64' ? 'windows-aarch64' : 'windows-x64',
+        '--input-dir', input.get().asFile.path,
+        '--exec', 'MARS.exe',
+        '--output', output.get().asFile.path,
+        // A fresh id per build, so a new exe never runs an older version's unpacked files.
+        '--prefix', 'MARS',
+        '--unique-id'
+
+    // warp-packer writes over an existing file without truncating it.
+    doFirst { injected.fs.delete { delete output } }
+}
+
 def appDirTask = tasks.register('appDir', Sync) {
     from jpackageImage
     from('packaging/linux') {
