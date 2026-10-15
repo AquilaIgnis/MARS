@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "v*"
+  # Manual runs only build; the packages are attached to the run as artifacts.
+  workflow_dispatch:
 
 jobs:
   # jpackage can't cross-build, so each native package is built on its own OS.
@@ -61,6 +63,7 @@ jobs:
 
   release:
     needs: [linux, windows]
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: write
