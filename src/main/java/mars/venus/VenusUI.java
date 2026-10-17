@@ -202,14 +202,7 @@ public class VenusUI extends JFrame {
 
     Globals.initialize(true);
 
-    //  image courtesy of NASA/JPL.
-    URL im = this.getClass().getResource(Globals.imagesPath + "RedMars16.gif");
-    if (im == null) {
-      System.out.println("Internal Error: images folder or file not found");
-      System.exit(0);
-    }
-    Image mars = Toolkit.getDefaultToolkit().getImage(im);
-    this.setIconImage(mars);
+    this.setIconImages(appIcons());
     // Everything in frame will be arranged on JPanel "center", which is only frame component.
     // "center" has BorderLayout and 2 major components:
     //   -- panel (jp) on North with 2 components
@@ -295,6 +288,23 @@ public class VenusUI extends JFrame {
 
     this.pack();
     this.setVisible(true);
+  }
+
+  /**
+   * Loads the MARS app icon (image courtesy of NASA/JPL) in every size from 16 to 256 pixels, so
+   * the OS can pick a sharp one for the title bar, taskbar and HiDPI screens.
+   */
+  public static java.util.List<Image> appIcons() {
+    java.util.List<Image> icons = new java.util.ArrayList<>();
+    for (int size : new int[] {16, 24, 32, 48, 64, 128, 256}) {
+      URL im = VenusUI.class.getResource(Globals.imagesPath + "mars-" + size + ".png");
+      if (im == null) {
+        System.out.println("Internal Error: images folder or file not found");
+        System.exit(0);
+      }
+      icons.add(Toolkit.getDefaultToolkit().getImage(im));
+    }
+    return icons;
   }
 
   /** Loads a theme-aware SVG icon from the /icons resource folder. */
