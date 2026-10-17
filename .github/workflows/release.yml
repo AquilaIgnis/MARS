@@ -53,22 +53,23 @@ jobs:
           java-version: "25"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-      - name: Install warp-packer
-        working-directory: ${{ runner.temp }}
-        shell: bash
+      # jpackage builds the MSI with WiX. 5 is the newest major jpackage supports, and it needs
+      # the UI and Util extensions installed globally.
+      - name: Install WiX
         run: |
-          curl -fsSL -o warp-packer.exe https://github.com/kirbylink/warp/releases/download/v1.3.0/windows-x64.warp-packer.exe
-          echo "483726e0eb10a43167c03c8e4f27a2901741affd245e5ec8ed45509f9dcd7a8a  warp-packer.exe" | sha256sum -c -
-          echo "WARP_PACKER=$(cygpath -w "$PWD/warp-packer.exe")" >> "$GITHUB_ENV"
+          dotnet tool install --global wix --version 5.0.2
+          $tools = "$env:USERPROFILE\.dotnet\tools"
+          & "$tools\wix.exe" extension add --global WixToolset.UI.wixext/5.0.2 WixToolset.Util.wixext/5.0.2
+          Add-Content $env:GITHUB_PATH $tools
       - name: Build
-        run: .\gradlew.bat clean portableZip windowsExe
+        run: .\gradlew.bat clean portableZip windowsMsi
       - name: Upload
         uses: actions/upload-artifact@v7
         with:
           name: windows
           path: |
             build/distributions/*.zip
-            build/distributions/*.exe
+            build/distributions/*.msi
 
   release:
     needs: [linux, windows]

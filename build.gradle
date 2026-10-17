@@ -57,32 +57,39 @@ def stageJar = tasks.register('stageJar', Sync) {
     into jpackageInputDir
 }
 
-def jpackageImage = tasks.register('jpackageImage', Exec) {
-    group = 'distribution'
-    description = 'Builds a MARS app folder that bundles its own Java runtime.'
-    dependsOn stageJar
-    inputs.dir(jpackageInputDir)
-    inputs.dir('packaging')
-    outputs.dir(jpackageDir)
+// The launchers and metadata shared by every jpackage task. The vendor and copyright end up in the
+// exe's version info, which antivirus heuristics count against an exe when they're left "Unknown".
+def configureJpackage = { Exec task ->
+    task.dependsOn stageJar
+    task.inputs.dir(jpackageInputDir)
+    task.inputs.dir('packaging')
 
     // Some distro JDKs (e.g. Fedora's) ship without jmods and with a modified security config,
     // which breaks jlink. -PjpackageJdk=/path/to/jdk points jpackage at a different JDK.
     def jdk = providers.gradleProperty('jpackageJdk').getOrElse(System.getProperty('java.home'))
-    executable = new File(jdk, isWindows ? 'bin/jpackage.exe' : 'bin/jpackage').path
-    args '--type', 'app-image',
-        '--name', 'MARS',
+    task.executable = new File(jdk, isWindows ? 'bin/jpackage.exe' : 'bin/jpackage').path
+    task.args '--name', 'MARS',
         '--app-version', project.version.toString(),
         '--description', 'MIPS Assembler and Runtime Simulator',
+        '--vendor', 'Pete Sanderson and Kenneth Vollmar',
+        '--copyright', 'Copyright (c) 2003-2014 Pete Sanderson and Kenneth Vollmar',
         '--input', jpackageInputDir.get().asFile.path,
         '--main-jar', tasks.named('jar').get().archiveFileName.get(),
-        '--add-modules', 'java.base,java.desktop,java.logging,java.naming,java.prefs',
-        '--dest', jpackageDir.get().asFile.path
+        '--add-modules', 'java.base,java.desktop,java.logging,java.naming,java.prefs'
     if (isWindows) {
-        args '--icon', file('src/main/resources/images/mars.ico').path,
+        task.args '--icon', file('src/main/resources/images/mars.ico').path,
             '--add-launcher', "MARS-cli=${file('packaging/windows/MARS-cli.properties').path}"
     } else if (isLinux) {
-        args '--icon', file('packaging/linux/mars.png').path
+        task.args '--icon', file('packaging/linux/mars.png').path
     }
+}
+
+def jpackageImage = tasks.register('jpackageImage', Exec) {
+    group = 'distribution'
+    description = 'Builds a MARS app folder that bundles its own Java runtime.'
+    configureJpackage(it)
+    outputs.dir(jpackageDir)
+    args '--type', 'app-image', '--dest', jpackageDir.get().asFile.path
 
     // jpackage refuses to overwrite an existing image.
     doFirst { injected.fs.delete { delete jpackageDir } }
@@ -96,31 +103,35 @@ tasks.register('portableZip', Zip) {
     destinationDirectory = layout.buildDirectory.dir('distributions')
 }
 
-// jpackage's MARS.exe is only a launcher stub that needs the app and runtime folders next to it,
-// so warp-packer bundles the whole folder into one exe. It unpacks itself into
-// %LOCALAPPDATA%\warp\packages\MARS on first run and runs from there afterwards.
-tasks.register('windowsExe', Exec) {
+// An installer rather than a self-extracting exe: an exe that unpacks itself and runs what it
+// unpacked looks like a malware dropper to antivirus heuristics, so it kept getting flagged.
+tasks.register('windowsMsi', Exec) {
     group = 'distribution'
-    description = 'Packs the jpackage app folder into a single Windows exe. Needs warp-packer on PATH or in $WARP_PACKER.'
-    onlyIf('The jpackage app folder for Windows can only be built on Windows') { isWindows }
-    dependsOn jpackageImage
-    def input = jpackageDir.map { it.dir('MARS') }
-    def output = layout.buildDirectory.file("distributions/MARS-${project.version}-windows-${osArch}.exe")
-    inputs.dir(input)
+    description = 'Builds a Windows MSI installer. Needs WiX 3, or WiX 4/5 with the UI and Util extensions, on PATH.'
+    onlyIf('MSI installers can only be built on Windows') { isWindows }
+    configureJpackage(it)
+    def dest = layout.buildDirectory.dir('jpackage-msi')
+    def output = layout.buildDirectory.file("distributions/MARS-${project.version}-windows-${osArch}.msi")
     outputs.file(output)
+    args '--type', 'msi',
+        '--dest', dest.get().asFile.path,
+        '--win-menu',
+        '--win-shortcut',
+        '--win-shortcut-prompt',
+        '--win-dir-chooser',
+        // Must never change, so that installing a newer MSI upgrades the installed version.
+        '--win-upgrade-uuid', '2618adc9-3416-4355-9dc5-f62c2cf09ad5'
 
-    executable = providers.environmentVariable('WARP_PACKER').getOrElse('warp-packer')
-    args 'pack',
-        '--arch', osArch == 'aarch64' ? 'windows-aarch64' : 'windows-x64',
-        '--input-dir', input.get().asFile.path,
-        '--exec', 'MARS.exe',
-        '--output', output.get().asFile.path,
-        // A fresh id per build, so a new exe never runs an older version's unpacked files.
-        '--prefix', 'MARS',
-        '--unique-id'
-
-    // warp-packer writes over an existing file without truncating it.
-    doFirst { injected.fs.delete { delete output } }
+    doFirst { injected.fs.delete { delete dest } }
+    // jpackage always names it MARS-<version>.msi, so rename it to match the other packages.
+    doLast {
+        injected.fs.copy {
+            from dest
+            include '*.msi'
+            into output.get().asFile.parentFile
+            rename { output.get().asFile.name }
+        }
+    }
 }
 
 def appDirTask = tasks.register('appDir', Sync) {
