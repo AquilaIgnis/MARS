@@ -44,7 +44,7 @@ Java jar , Linux & windows
 
 Run the app with the `./gradlew run` command.
 
-- [Syscalls](./docs/mars_syscall_reference.md.md)
+- [Syscalls](./docs/mars_syscall_reference.md)
 - [macros](./docs/mars_macros_reference.md)
 
 ## Credits
